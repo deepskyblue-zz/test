@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>초등학교 출결 관리 시스템</title>
+    <title>초등학교 담임교사 출석부</title>
     <style>
         body {
-            font-family: 'Nanum Gothic', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f5f5f5;
@@ -14,26 +14,54 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            background-color: white;
+            background-color: #fff;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         h1 {
             color: #3f51b5;
             text-align: center;
             margin-bottom: 30px;
         }
-        .header {
+        .header-section {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 20px;
+            align-items: flex-end;
         }
-        .date-selector {
+        .class-info {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
         }
         table {
             width: 100%;
@@ -41,368 +69,463 @@
             margin-top: 20px;
         }
         th, td {
-            padding: 12px;
-            text-align: center;
             border: 1px solid #ddd;
+            padding: 12px 8px;
+            text-align: center;
         }
         th {
-            background-color: #3f51b5;
-            color: white;
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f9f9f9;
         }
-        select, button {
-            padding: 8px 12px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+        tr:hover {
+            background-color: #f1f1f1;
         }
-        button {
-            background-color: #3f51b5;
-            color: white;
-            cursor: pointer;
-            border: none;
+        .status-select {
+            width: 100%;
+            padding: 5px;
         }
-        button:hover {
-            background-color: #303f9f;
+        .student-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
         }
-        .status-btn {
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 55px;
-            text-align: center;
+        .student-form input {
+            flex: 1;
         }
-        .present {
-            background-color: #4CAF50;
-            color: white;
+        .student-form button {
+            flex: 0;
         }
-        .absent {
-            background-color: #F44336;
-            color: white;
-        }
-        .late {
-            background-color: #FF9800;
-            color: white;
-        }
-        .initial {
-            background-color: #E0E0E0;
-        }
-        .save-section {
+        .actions {
+            display: flex;
+            justify-content: space-between;
             margin-top: 20px;
-            text-align: right;
         }
-        .loader {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
+        .delete-btn {
+            background-color: #f44336;
         }
-        .message {
-            text-align: center;
-            margin: 10px 0;
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .export-btn {
+            background-color: #2196f3;
+        }
+        .export-btn:hover {
+            background-color: #1976d2;
+        }
+        .date-picker {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .date-picker input {
+            flex: 1;
+        }
+        .note-cell {
+            font-size: 12px;
+            color: #777;
+        }
+        #scriptWarning {
+            background-color: #fff3cd;
+            color: #856404;
             padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        .success {
-            background-color: #dff0d8;
-            color: #3c763d;
-        }
-        .error {
-            background-color: #f2dede;
-            color: #a94442;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>초등학교 출결 관리 시스템</h1>
+        <h1>초등학교 담임교사 출석부</h1>
         
-        <div class="header">
-            <div class="date-selector">
-                <label for="date">날짜:</label>
-                <input type="date" id="date" name="date">
-                <button id="load-btn">출결 불러오기</button>
-            </div>
-            <div>
-                <select id="class-select">
-                    <option value="1">1반</option>
-                    <option value="2">2반</option>
-                    <option value="3">3반</option>
-                    <option value="4">4반</option>
-                </select>
+        <div id="scriptWarning">
+            이 예제는 클라이언트 측에서만 작동하는 데모입니다. 실제 구글 스프레드시트 연동은 서버 측 스크립트가 필요합니다.
+        </div>
+        
+        <div class="header-section">
+            <div class="class-info">
+                <div class="form-group">
+                    <label for="schoolYear">학년도</label>
+                    <input type="number" id="schoolYear" min="2024" value="2024">
+                </div>
+                <div class="form-group">
+                    <label for="grade">학년</label>
+                    <select id="grade">
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                        <option value="4">4학년</option>
+                        <option value="5">5학년</option>
+                        <option value="6">6학년</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="class">반</label>
+                    <select id="class">
+                        <option value="1">1반</option>
+                        <option value="2">2반</option>
+                        <option value="3">3반</option>
+                        <option value="4">4반</option>
+                        <option value="5">5반</option>
+                        <option value="6">6반</option>
+                        <option value="7">7반</option>
+                        <option value="8">8반</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="teacher">담임교사</label>
+                    <input type="text" id="teacher" placeholder="이름을 입력하세요">
+                </div>
             </div>
         </div>
         
-        <div id="message" class="message"></div>
-        <div id="loader" class="loader">불러오는 중...</div>
+        <div class="date-picker">
+            <div class="form-group">
+                <label for="attendanceDate">출석 날짜</label>
+                <input type="date" id="attendanceDate">
+            </div>
+            <button onclick="setToday()">오늘 날짜</button>
+        </div>
         
-        <table id="attendance-table">
+        <div class="student-form">
+            <div class="form-group">
+                <input type="text" id="newStudentName" placeholder="학생 이름">
+            </div>
+            <div class="form-group">
+                <input type="text" id="newStudentNumber" placeholder="학생 번호">
+            </div>
+            <button onclick="addStudent()">학생 추가</button>
+        </div>
+        
+        <table id="attendanceTable">
             <thead>
                 <tr>
                     <th>번호</th>
                     <th>이름</th>
-                    <th>출결 상태</th>
-                    <th>메모</th>
+                    <th>출석 상태</th>
+                    <th>비고</th>
                 </tr>
             </thead>
-            <tbody id="attendance-body"></tbody>
+            <tbody id="studentList">
+                <!-- 학생 목록은 JavaScript로 채워집니다 -->
+            </tbody>
         </table>
         
-        <div class="save-section">
-            <button id="save-btn">저장하기</button>
+        <div class="actions">
+            <button onclick="saveAttendance()" class="export-btn">출석 저장</button>
+            <button onclick="exportToCSV()" class="export-btn">CSV 내보내기</button>
+            <button onclick="mockSendToGoogleSheets()" class="export-btn">구글 스프레드시트로 보내기 (시뮬레이션)</button>
+            <button onclick="clearAttendance()" class="delete-btn">초기화</button>
         </div>
     </div>
 
     <script>
-        // 구글 스프레드시트 API 연동 스크립트
-        document.addEventListener('DOMContentLoaded', function() {
-            // 현재 날짜 설정
+        // 초기 학생 데이터
+        let students = [];
+        let attendanceData = {};
+        
+        // 페이지 로드 시 실행
+        window.onload = function() {
+            setToday();
+            loadSavedData();
+        };
+        
+        // 오늘 날짜 설정
+        function setToday() {
             const today = new Date();
-            const dateInput = document.getElementById('date');
-            dateInput.valueAsDate = today;
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1;
+            let dd = today.getDate();
             
-       
+            if (mm < 10) mm = '0' + mm;
+            if (dd < 10) dd = '0' + dd;
             
-            const classSelect = document.getElementById('class-select');
-            const loadBtn = document.getElementById('load-btn');
-            const saveBtn = document.getElementById('save-btn');
-            const attendanceBody = document.getElementById('attendance-body');
-            const messageDiv = document.getElementById('message');
-            const loaderDiv = document.getElementById('loader');
+            const formattedDate = yyyy + '-' + mm + '-' + dd;
+            document.getElementById('attendanceDate').value = formattedDate;
             
-            // 출결 상태 변경 함수
-            function toggleStatus(button) {
-                const statuses = ['', 'present', 'late', 'absent'];
-                let currentIndex = statuses.indexOf(button.dataset.status);
-                currentIndex = (currentIndex + 1) % statuses.length;
-                
-                // 모든 클래스 제거
-                button.classList.remove('initial', 'present', 'late', 'absent');
-                
-                // 새 상태 설정
-                const newStatus = statuses[currentIndex];
-                button.dataset.status = newStatus;
-                
-                if (newStatus === '') {
-                    button.classList.add('initial');
-                    button.textContent = '선택';
-                } else if (newStatus === 'present') {
-                    button.classList.add('present');
-                    button.textContent = '출석';
-                } else if (newStatus === 'late') {
-                    button.classList.add('late');
-                    button.textContent = '지각';
-                } else {
-                    button.classList.add('absent');
-                    button.textContent = '결석';
-                }
-            }
-            
-            // 학생 목록 표시 함수
-            function displayStudents(classId) {
-                attendanceBody.innerHTML = '';
-                const students = sampleStudents[classId];
-                
-                students.forEach(student => {
-                    const row = document.createElement('tr');
-                    
-                    const idCell = document.createElement('td');
-                    idCell.textContent = student.id;
-                    
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = student.name;
-                    
-                    const statusCell = document.createElement('td');
-                    const statusBtn = document.createElement('button');
-                    statusBtn.classList.add('status-btn', 'initial');
-                    statusBtn.textContent = '선택';
-                    statusBtn.dataset.status = '';
-                    statusBtn.onclick = function() {
-                        toggleStatus(this);
-                    };
-                    statusCell.appendChild(statusBtn);
-                    
-                    const memoCell = document.createElement('td');
-                    const memoInput = document.createElement('input');
-                    memoInput.type = 'text';
-                    memoInput.placeholder = '메모 입력';
-                    memoInput.value = student.memo;
-                    memoCell.appendChild(memoInput);
-                    
-                    row.appendChild(idCell);
-                    row.appendChild(nameCell);
-                    row.appendChild(statusCell);
-                    row.appendChild(memoCell);
-                    
-                    attendanceBody.appendChild(row);
-                });
-            }
-            
-            // 초기 학생 목록 로드
-            displayStudents(classSelect.value);
-            
-            // 반 변경 시 학생 목록 업데이트
-            classSelect.addEventListener('change', function() {
-                displayStudents(this.value);
-            });
-            
-            // 출결 데이터 불러오기 (실제로는 구글 스프레드시트 API 사용)
-            loadBtn.addEventListener('click', function() {
-                const selectedDate = dateInput.value;
-                const selectedClass = classSelect.value;
-                
-                // 로딩 표시
-                loaderDiv.style.display = 'block';
-                messageDiv.style.display = 'none';
-                
-                // API 호출 시뮬레이션
-                setTimeout(() => {
-                    loaderDiv.style.display = 'none';
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = `${selectedDate} ${selectedClass}반 출결 데이터를 불러왔습니다.`;
-                    messageDiv.style.display = 'block';
-                    
-                    // 실제로는 여기서 스프레드시트 데이터 처리
-                    displayStudents(selectedClass);
-                }, 1000);
-            });
-            
-            // 출결 데이터 저장하기 (실제로는 구글 스프레드시트 API 사용)
-            saveBtn.addEventListener('click', function() {
-                const selectedDate = dateInput.value;
-                const selectedClass = classSelect.value;
-                
-                // 데이터 수집
-                const attendanceData = [];
-                const rows = attendanceBody.querySelectorAll('tr');
-                
-                rows.forEach(row => {
-                    const id = row.cells[0].textContent;
-                    const name = row.cells[1].textContent;
-                    const statusBtn = row.cells[2].querySelector('.status-btn');
-                    const status = statusBtn.dataset.status;
-                    const memo = row.cells[3].querySelector('input').value;
-                    
-                    attendanceData.push({
-                        id,
-                        name,
-                        status,
-                        memo,
-                        date: selectedDate,
-                        class: selectedClass
-                    });
-                });
-                
-                // 로딩 표시
-                loaderDiv.style.display = 'block';
-                messageDiv.style.display = 'none';
-                
-                // API 호출 시뮬레이션
-                setTimeout(() => {
-                    loaderDiv.style.display = 'none';
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = `${selectedDate} ${selectedClass}반 출결 데이터가 저장되었습니다.`;
-                    messageDiv.style.display = 'block';
-                    
-                    console.log('저장된 데이터:', attendanceData);
-                    // 실제로는 여기서 Google Sheets API 호출
-                }, 1000);
-            });
-        });
-        
-
-        // 1. 구글 API 로드
-        function loadGoogleAPI() {
-            const script = document.createElement('script');
-            script.src = 'https://apis.google.com/js/api.js';
-            script.onload = loadGAPIClient;
-            document.body.appendChild(script);
+            // 날짜가 변경되면 해당 날짜의 출석 데이터 불러오기
+            loadAttendanceForDate(formattedDate);
         }
         
-        // 2. GAPI 클라이언트 로드
-        function loadGAPIClient() {
-            gapi.load('client:auth2', initGAPIClient);
-        }
-        
-        // 3. API 클라이언트 초기화
-        function initGAPIClient() {
-            gapi.client.init({
-                apiKey: 'AIzaSyBigbxljKeki5dM_BtDanH7wgLlpnAkPwc',
-                clientId: '508855930338-8vdgs24bkmtog2aqivmb83erfbob6g1q.apps.googleusercontent.com',
-                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-                scope: 'https://www.googleapis.com/auth/spreadsheets'
-            }).then(function() {
-                // 인증 상태 리스너
-                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-                // 초기 인증 상태 설정
-                updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-            });
-        }
-        
-        // 4. 인증 상태 업데이트
-        function updateSigninStatus(isSignedIn) {
-            if (isSignedIn) {
-                // 로그인 성공, 데이터 로드 준비 완료
-                document.getElementById('load-btn').disabled = false;
-                document.getElementById('save-btn').disabled = false;
+        // 저장된 데이터 불러오기
+        function loadSavedData() {
+            const savedStudents = localStorage.getItem('students');
+            const savedAttendance = localStorage.getItem('attendanceData');
+            
+            if (savedStudents) {
+                students = JSON.parse(savedStudents);
             } else {
-                // 로그인 필요
-                document.getElementById('load-btn').disabled = true;
-                document.getElementById('save-btn').disabled = true;
-                gapi.auth2.getAuthInstance().signIn();
+                // 샘플 학생 데이터
+                students = [
+                    { id: 1, number: '1', name: '김영희' },
+                    { id: 2, number: '2', name: '이철수' },
+                    { id: 3, number: '3', name: '박민지' },
+                    { id: 4, number: '4', name: '정현우' },
+                    { id: 5, number: '5', name: '강지훈' }
+                ];
+            }
+            
+            if (savedAttendance) {
+                attendanceData = JSON.parse(savedAttendance);
+            }
+            
+            renderStudentList();
+        }
+        
+        // 특정 날짜의 출석 데이터 불러오기
+        function loadAttendanceForDate(date) {
+            renderStudentList();
+            
+            if (attendanceData[date]) {
+                const dayData = attendanceData[date];
+                
+                for (const studentId in dayData) {
+                    const statusSelect = document.getElementById(`status-${studentId}`);
+                    const noteInput = document.getElementById(`note-${studentId}`);
+                    
+                    if (statusSelect && dayData[studentId].status) {
+                        statusSelect.value = dayData[studentId].status;
+                    }
+                    
+                    if (noteInput && dayData[studentId].note) {
+                        noteInput.value = dayData[studentId].note;
+                    }
+                }
             }
         }
         
-        // 5. 스프레드시트에서 데이터 불러오기
-        function loadFromSpreadsheet(date, classId) {
-            return gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: '1oTXIE5sF8As54IEszmf2HJr1Dqyz4bOWmF9uU7B5ev4',
-                range: `${classId}!A:E`, // 범위 지정
-            }).then(function(response) {
-                const range = response.result;
-                if (range.values.length > 0) {
-                    // 데이터 처리
-                    return range.values;
-                } else {
-                    console.log('데이터가 없습니다.');
-                    return [];
-                }
-            }, function(response) {
-                console.error('데이터 불러오기 실패:', response.result.error.message);
-                return [];
-            });
-        }
-        
-        // 6. 스프레드시트에 데이터 저장하기
-        function saveToSpreadsheet(data, classId) {
-            const values = data.map(item => [
-                item.date,
-                item.id,
-                item.name,
-                item.status,
-                item.memo
-            ]);
+        // 학생 목록 렌더링
+        function renderStudentList() {
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = '';
             
-            return gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: '1oTXIE5sF8As54IEszmf2HJr1Dqyz4bOWmF9uU7B5ev4',
-                range: `${classId}!A:E`,
-                valueInputOption: 'USER_ENTERED',
-                insertDataOption: 'INSERT_ROWS',
-                resource: {
-                    values: values
-                }
-            }).then(function(response) {
-                console.log('저장 성공:', response.result);
-                return true;
-            }, function(response) {
-                console.error('저장 실패:', response.result.error.message);
-                return false;
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // 번호 셀
+                const numberCell = document.createElement('td');
+                numberCell.textContent = student.number;
+                row.appendChild(numberCell);
+                
+                // 이름 셀
+                const nameCell = document.createElement('td');
+                nameCell.textContent = student.name;
+                row.appendChild(nameCell);
+                
+                // 출석 상태 셀
+                const statusCell = document.createElement('td');
+                const statusSelect = document.createElement('select');
+                statusSelect.id = `status-${student.id}`;
+                statusSelect.className = 'status-select';
+                
+                const statusOptions = [
+                    { value: 'present', text: '출석' },
+                    { value: 'late', text: '지각' },
+                    { value: 'earlyLeave', text: '조퇴' },
+                    { value: 'absence', text: '결석' },
+                    { value: 'sickLeave', text: '병결' },
+                    { value: 'fieldTrip', text: '현장체험' }
+                ];
+                
+                statusOptions.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option.value;
+                    optionElement.textContent = option.text;
+                    statusSelect.appendChild(optionElement);
+                });
+                
+                statusCell.appendChild(statusSelect);
+                row.appendChild(statusCell);
+                
+                // 비고 셀
+                const noteCell = document.createElement('td');
+                const noteInput = document.createElement('input');
+                noteInput.type = 'text';
+                noteInput.id = `note-${student.id}`;
+                noteInput.className = 'note-cell';
+                noteInput.placeholder = '비고';
+                noteCell.appendChild(noteInput);
+                row.appendChild(noteCell);
+                
+                studentList.appendChild(row);
             });
         }
         
-        // 구글 API 로드 시작
-        loadGoogleAPI();
+        // 학생 추가
+        function addStudent() {
+            const nameInput = document.getElementById('newStudentName');
+            const numberInput = document.getElementById('newStudentNumber');
+            
+            const name = nameInput.value.trim();
+            const number = numberInput.value.trim();
+            
+            if (name && number) {
+                const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+                
+                students.push({
+                    id: newId,
+                    number: number,
+                    name: name
+                });
+                
+                nameInput.value = '';
+                numberInput.value = '';
+                
+                saveStudents();
+                renderStudentList();
+            } else {
+                alert('학생 이름과 번호를 모두 입력해주세요.');
+            }
+        }
+        
+        // 학생 데이터 저장
+        function saveStudents() {
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+        
+        // 출석 데이터 저장
+        function saveAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            
+            if (!date) {
+                alert('날짜를 선택해주세요.');
+                return;
+            }
+            
+            if (!attendanceData[date]) {
+                attendanceData[date] = {};
+            }
+            
+            students.forEach(student => {
+                const statusSelect = document.getElementById(`status-${student.id}`);
+                const noteInput = document.getElementById(`note-${student.id}`);
+                
+                if (statusSelect) {
+                    attendanceData[date][student.id] = {
+                        status: statusSelect.value,
+                        note: noteInput ? noteInput.value : ''
+                    };
+                }
+            });
+            
+            localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+            alert('출석 정보가 저장되었습니다.');
+        }
+        
+        // CSV로 내보내기
+        function exportToCSV() {
+            const date = document.getElementById('attendanceDate').value;
+            const schoolYear = document.getElementById('schoolYear').value;
+            const grade = document.getElementById('grade').value;
+            const classNum = document.getElementById('class').value;
+            const teacher = document.getElementById('teacher').value;
+            
+            if (!date) {
+                alert('날짜를 선택해주세요.');
+                return;
+            }
+            
+            let csvContent = "학년도,학년,반,담임교사,날짜,번호,이름,출석상태,비고\n";
+            
+            const formatDate = date.replace(/-/g, '.');
+            const dayData = attendanceData[date] || {};
+            
+            students.forEach(student => {
+                const studentData = dayData[student.id] || { status: 'present', note: '' };
+                
+                let statusText = '출석';
+                switch (studentData.status) {
+                    case 'late': statusText = '지각'; break;
+                    case 'earlyLeave': statusText = '조퇴'; break;
+                    case 'absence': statusText = '결석'; break;
+                    case 'sickLeave': statusText = '병결'; break;
+                    case 'fieldTrip': statusText = '현장체험'; break;
+                }
+                
+                const row = [
+                    schoolYear,
+                    grade + '학년',
+                    classNum + '반',
+                    teacher,
+                    formatDate,
+                    student.number,
+                    student.name,
+                    statusText,
+                    studentData.note
+                ].map(cell => `"${cell}"`).join(',');
+                
+                csvContent += row + "\n";
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `출석부_${schoolYear}학년도_${grade}학년${classNum}반_${date}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 구글 스프레드시트로 보내기 (시뮬레이션)
+       function sendToGoogleSheets() {
+    const date = document.getElementById('attendanceDate').value;
+    const schoolYear = document.getElementById('schoolYear').value;
+    const grade = document.getElementById('grade').value;
+    const classNum = document.getElementById('class').value;
+    const teacher = document.getElementById('teacher').value;
+    
+    if (!date) {
+        alert('날짜를 선택해주세요.');
+        return;
+    }
+    
+    const dayData = attendanceData[date] || {};
+    
+    // 구글 스크립트 웹앱 URL (배포 후 얻은 URL로 변경)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx2jaej8vMKo2APNzh617M9vNMjUePJbvlVUXCeVysh2n8DYxgeypenXAqQUwsxzI9Zow/exec';
+    
+    // 전송할 데이터 구성
+    const dataToSend = {
+        date: date,
+        schoolYear: schoolYear,
+        grade: grade,
+        classNum: classNum,
+        teacher: teacher,
+        students: students,
+        attendanceData: dayData
+    };
+    
+    // 로딩 표시
+    const saveButton = document.querySelector('.export-btn');
+    const originalText = saveButton.textContent;
+    saveButton.textContent = '전송 중...';
+    saveButton.disabled = true;
+    
+    // 데이터 전송
+    fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(dataToSend)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            alert('데이터가 구글 스프레드시트에 성공적으로 저장되었습니다.');
+        } else {
+            alert('오류 발생: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('데이터 전송 중 오류가 발생했습니다: ' + error);
+    })
+    .finally(() => {
+        saveButton.textContent = originalText;
+        saveButton.disabled = false;
+    });
+}
     </script>
 </body>
 </html>
