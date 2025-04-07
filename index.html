@@ -1,831 +1,440 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>담임 출결 관리 시스템</title>
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .date-selector {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    #dateInput {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    tr:hover {
-      background-color: #f9f9f9;
-    }
-    select {
-      padding: 6px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      width: 100%;
-    }
-    .status-present {
-      color: #27ae60;
-    }
-    .status-absent {
-      color: #e74c3c;
-    }
-    .status-late {
-      color: #f39c12;
-    }
-    .status-excused {
-      color: #3498db;
-    }
-    .buttons {
-      text-align: center;
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 0 5px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #2980b9;
-    }
-    #message {
-      margin-top: 20px;
-      padding: 10px;
-      text-align: center;
-      border-radius: 4px;
-      display: none;
-    }
-    .success {
-      background-color: #d4edda;
-      color: #155724;
-    }
-    .error {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-    .auth-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    #studentForm {
-      margin-top: 20px;
-      padding: 15px;
-      background-color: #f9f9f9;
-      border-radius: 5px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .attendance-summary {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .summary-item {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 10px;
-      width: 22%;
-    }
-    .summary-item span {
-      font-size: 24px;
-      font-weight: bold;
-      display: block;
-    }
-    .tab-container {
-      margin-bottom: 20px;
-    }
-    .tab {
-      overflow: hidden;
-      border: 1px solid #ccc;
-      background-color: #f1f1f1;
-      border-radius: 4px 4px 0 0;
-    }
-    .tab button {
-      background-color: inherit;
-      float: left;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      padding: 10px 16px;
-      transition: 0.3s;
-      color: black;
-      font-size: 14px;
-    }
-    .tab button:hover {
-      background-color: #ddd;
-    }
-    .tab button.active {
-      background-color: #3498db;
-      color: white;
-    }
-    .tabcontent {
-      display: none;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-top: none;
-      border-radius: 0 0 4px 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초등학교 출결 관리 시스템</title>
+    <style>
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #3f51b5;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3f51b5;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        select, button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #3f51b5;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #303f9f;
+        }
+        .status-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 55px;
+            text-align: center;
+        }
+        .present {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .absent {
+            background-color: #F44336;
+            color: white;
+        }
+        .late {
+            background-color: #FF9800;
+            color: white;
+        }
+        .initial {
+            background-color: #E0E0E0;
+        }
+        .save-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .message {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>담임 출결 관리 시스템</h1>
-    
-    <div class="auth-container" id="authSection">
-      <p>구글 스프레드시트와 연동하려면 로그인이 필요합니다.</p>
-      <button id="authorizeButton">구글 계정 연동</button>
-    </div>
-
-    <div class="tab-container">
-      <div class="tab">
-        <button class="tablinks active" onclick="openTab(event, 'dailyAttendance')">일일 출결 관리</button>
-        <button class="tablinks" onclick="openTab(event, 'studentManagement')">학생 관리</button>
-        <button class="tablinks" onclick="openTab(event, 'reports')">출결 리포트</button>
-      </div>
-
-      <div id="dailyAttendance" class="tabcontent" style="display: block;">
-        <div class="date-selector">
-          <input type="date" id="dateInput" value="">
-          <button id="loadButton">출결 불러오기</button>
+    <div class="container">
+        <h1>초등학교 출결 관리 시스템</h1>
+        
+        <div class="header">
+            <div class="date-selector">
+                <label for="date">날짜:</label>
+                <input type="date" id="date" name="date">
+                <button id="load-btn">출결 불러오기</button>
+            </div>
+            <div>
+                <select id="class-select">
+                    <option value="1">1반</option>
+                    <option value="2">2반</option>
+                    <option value="3">3반</option>
+                    <option value="4">4반</option>
+                </select>
+            </div>
         </div>
         
-        <div class="attendance-summary">
-          <div class="summary-item">
-            <span id="presentCount">0</span>
-            출석
-          </div>
-          <div class="summary-item">
-            <span id="absentCount">0</span>
-            결석
-          </div>
-          <div class="summary-item">
-            <span id="lateCount">0</span>
-            지각
-          </div>
-          <div class="summary-item">
-            <span id="excusedCount">0</span>
-            사유결석
-          </div>
-        </div>
-
-        <table id="attendanceTable">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>이름</th>
-              <th>출결 상태</th>
-              <th>비고</th>
-            </tr>
-          </thead>
-          <tbody id="attendanceBody">
-            <!-- 여기에 학생 목록이 동적으로 추가됩니다 -->
-          </tbody>
-        </table>
+        <div id="message" class="message"></div>
+        <div id="loader" class="loader">불러오는 중...</div>
         
-        <div class="buttons">
-          <button id="saveButton">저장하기</button>
-        </div>
-      </div>
-
-      <div id="studentManagement" class="tabcontent">
-        <button id="addStudentBtn">학생 추가</button>
-        
-        <form id="studentForm" style="display: none;">
-          <div class="form-group">
-            <label for="studentNumber">학생 번호:</label>
-            <input type="number" id="studentNumber" required>
-          </div>
-          <div class="form-group">
-            <label for="studentName">학생 이름:</label>
-            <input type="text" id="studentName" required>
-          </div>
-          <button type="submit">저장</button>
-          <button type="button" id="cancelAdd">취소</button>
-        </form>
-        
-        <table id="studentTable" style="margin-top: 20px;">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>이름</th>
-              <th>관리</th>
-            </tr>
-          </thead>
-          <tbody id="studentBody">
-            <!-- 여기에 학생 목록이 동적으로 추가됩니다 -->
-          </tbody>
-        </table>
-      </div>
-
-      <div id="reports" class="tabcontent">
-        <h3>월별 출결 현황</h3>
-        <div class="form-group">
-          <label for="monthSelect">월 선택:</label>
-          <select id="monthSelect">
-            <option value="3">3월</option>
-            <option value="4">4월</option>
-            <option value="5">5월</option>
-            <option value="6">6월</option>
-            <option value="7">7월</option>
-            <option value="8">8월</option>
-            <option value="9">9월</option>
-            <option value="10">10월</option>
-            <option value="11">11월</option>
-            <option value="12">12월</option>
-            <option value="1">1월</option>
-            <option value="2">2월</option>
-          </select>
-        </div>
-        <button id="generateReportBtn">리포트 생성</button>
-        
-        <div id="reportResult" style="margin-top: 20px;">
-          <!-- 여기에 리포트 결과가 표시됩니다 -->
-        </div>
-      </div>
-    </div>
-
-    <div id="message"></div>
-  </div>
-
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script>
-    // 구글 API 클라이언트 ID와 API 키 설정
-    const CLIENT_ID = '508855930338-8vdgs24bkmtog2aqivmb83erfbob6g1q.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyBigbxljKeki5dM_BtDanH7wgLlpnAkPwc';
-    const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-    const SPREADSHEET_ID = '1oTXIE5sF8As54IEszmf2HJr1Dqyz4bOWmF9uU7B5ev4';
-    
-    // 학생 데이터와 출결 데이터
-    let students = [];
-    let attendanceData = {};
-    let isAuthorized = false;
-
-    // 페이지 로드 시 날짜를 오늘로 설정
-    document.addEventListener('DOMContentLoaded', function() {
-      const today = new Date();
-      const formattedDate = today.toISOString().split('T')[0];
-      document.getElementById('dateInput').value = formattedDate;
-      
-      // 구글 API 로드
-      gapi.load('client:auth2', initClient);
-    });
-
-    // 구글 API 클라이언트 초기화
-    function initClient() {
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        scope: SCOPES,
-        discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"]
-      }).then(function() {
-        // 인증 상태 리스너 설정
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
-        
-        // 초기 인증 상태 설정
-        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        
-        // 인증 버튼 이벤트 리스너
-        document.getElementById('authorizeButton').onclick = function() {
-          if (!isAuthorized) {
-            gapi.auth2.getAuthInstance().signIn();
-          } else {
-            gapi.auth2.getAuthInstance().signOut();
-          }
-        };
-        
-        // 다른 버튼들의 이벤트 리스너 설정
-        document.getElementById('loadButton').addEventListener('click', loadAttendance);
-        document.getElementById('saveButton').addEventListener('click', saveAttendance);
-        document.getElementById('addStudentBtn').addEventListener('click', showAddStudentForm);
-        document.getElementById('cancelAdd').addEventListener('click', hideAddStudentForm);
-        document.getElementById('studentForm').addEventListener('submit', addStudent);
-        document.getElementById('generateReportBtn').addEventListener('click', generateReport);
-      });
-    }
-
-    // 인증 상태 업데이트
-    function updateSignInStatus(isSignedIn) {
-      isAuthorized = isSignedIn;
-      if (isSignedIn) {
-        document.getElementById('authorizeButton').textContent = '로그아웃';
-        loadStudents(); // 학생 목록 로드
-      } else {
-        document.getElementById('authorizeButton').textContent = '구글 계정 연동';
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-      }
-    }
-
-    // 학생 목록 로드
-    function loadStudents() {
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: '학생목록!A2:B'
-      }).then(function(response) {
-        const values = response.result.values || [];
-        students = values.map(row => ({ number: row[0], name: row[1] }));
-        
-        // 출결 테이블과 학생 테이블 업데이트
-        updateAttendanceTable();
-        updateStudentTable();
-      }, function(error) {
-        showMessage('학생 목록을 불러오는데 실패했습니다: ' + error.result.error.message, 'error');
-      });
-    }
-
-    // 출결 테이블 업데이트
-    function updateAttendanceTable() {
-      const tbody = document.getElementById('attendanceBody');
-      tbody.innerHTML = '';
-      
-      students.forEach((student, index) => {
-        const row = document.createElement('tr');
-        
-        const numberCell = document.createElement('td');
-        numberCell.textContent = student.number;
-        row.appendChild(numberCell);
-        
-        const nameCell = document.createElement('td');
-        nameCell.textContent = student.name;
-        row.appendChild(nameCell);
-        
-        const statusCell = document.createElement('td');
-        const statusSelect = document.createElement('select');
-        statusSelect.dataset.student = student.number;
-        
-        const statuses = [
-          { value: 'present', text: '출석', class: 'status-present' },
-          { value: 'absent', text: '결석', class: 'status-absent' },
-          { value: 'late', text: '지각', class: 'status-late' },
-          { value: 'excused', text: '사유결석', class: 'status-excused' }
-        ];
-        
-        statuses.forEach(status => {
-          const option = document.createElement('option');
-          option.value = status.value;
-          option.textContent = status.text;
-          option.className = status.class;
-          
-          // 현재 저장된 출결 상태가 있으면 선택
-          if (attendanceData[student.number] && attendanceData[student.number].status === status.value) {
-            option.selected = true;
-          } else if (!attendanceData[student.number] && status.value === 'present') {
-            // 기본값은 출석
-            option.selected = true;
-          }
-          
-          statusSelect.appendChild(option);
-        });
-        
-        // 출결 상태 변경 시 이벤트
-        statusSelect.addEventListener('change', function() {
-          updateStudentStatus(student.number, this.value);
-          updateStatusSummary();
-        });
-        
-        statusCell.appendChild(statusSelect);
-        row.appendChild(statusCell);
-        
-        const noteCell = document.createElement('td');
-        const noteInput = document.createElement('input');
-        noteInput.type = 'text';
-        noteInput.placeholder = '비고';
-        noteInput.dataset.student = student.number;
-        
-        // 현재 저장된 비고가 있으면 표시
-        if (attendanceData[student.number] && attendanceData[student.number].note) {
-          noteInput.value = attendanceData[student.number].note;
-        }
-        
-        // 비고 변경 시 이벤트
-        noteInput.addEventListener('change', function() {
-          updateStudentNote(student.number, this.value);
-        });
-        
-        noteCell.appendChild(noteInput);
-        row.appendChild(noteCell);
-        
-        tbody.appendChild(row);
-      });
-      
-      // 초기 상태 요약 업데이트
-      updateStatusSummary();
-    }
-
-    // 학생 상태 업데이트
-    function updateStudentStatus(studentNumber, status) {
-      if (!attendanceData[studentNumber]) {
-        attendanceData[studentNumber] = { status: status, note: '' };
-      } else {
-        attendanceData[studentNumber].status = status;
-      }
-    }
-
-    // 학생 비고 업데이트
-    function updateStudentNote(studentNumber, note) {
-      if (!attendanceData[studentNumber]) {
-        attendanceData[studentNumber] = { status: 'present', note: note };
-      } else {
-        attendanceData[studentNumber].note = note;
-      }
-    }
-
-    // 출결 상태 요약 업데이트
-    function updateStatusSummary() {
-      let presentCount = 0;
-      let absentCount = 0;
-      let lateCount = 0;
-      let excusedCount = 0;
-      
-      // 선택된 상태 집계
-      const selects = document.querySelectorAll('#attendanceBody select');
-      selects.forEach(select => {
-        switch (select.value) {
-          case 'present':
-            presentCount++;
-            break;
-          case 'absent':
-            absentCount++;
-            break;
-          case 'late':
-            lateCount++;
-            break;
-          case 'excused':
-            excusedCount++;
-            break;
-        }
-      });
-      
-      // 요약 업데이트
-      document.getElementById('presentCount').textContent = presentCount;
-      document.getElementById('absentCount').textContent = absentCount;
-      document.getElementById('lateCount').textContent = lateCount;
-      document.getElementById('excusedCount').textContent = excusedCount;
-    }
-
-    // 출결 데이터 로드
-    function loadAttendance() {
-      if (!isAuthorized) {
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-        return;
-      }
-      
-      const date = document.getElementById('dateInput').value;
-      if (!date) {
-        showMessage('날짜를 선택해주세요.', 'error');
-        return;
-      }
-      
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `출결기록!A2:D`
-      }).then(function(response) {
-        const values = response.result.values || [];
-        attendanceData = {};
-        
-        // 선택한 날짜의 출결 데이터 찾기
-        values.forEach(row => {
-          if (row[0] === date) {
-            const studentNumber = row[1];
-            const status = row[2];
-            const note = row[3] || '';
-            attendanceData[studentNumber] = { status: status, note: note };
-          }
-        });
-        
-        updateAttendanceTable();
-        showMessage('출결 데이터를 불러왔습니다.', 'success');
-      }, function(error) {
-        showMessage('출결 데이터를 불러오는데 실패했습니다: ' + error.result.error.message, 'error');
-      });
-    }
-
-    // 출결 데이터 저장
-    function saveAttendance() {
-      if (!isAuthorized) {
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-        return;
-      }
-      
-      const date = document.getElementById('dateInput').value;
-      if (!date) {
-        showMessage('날짜를 선택해주세요.', 'error');
-        return;
-      }
-      
-      // 출결 데이터를 스프레드시트에 추가할 형식으로 변환
-      const values = [];
-      students.forEach(student => {
-        const status = attendanceData[student.number]?.status || 'present';
-        const note = attendanceData[student.number]?.note || '';
-        values.push([date, student.number, student.name, status, note]);
-      });
-      
-      // 해당 날짜의 기존 데이터 삭제 후 새 데이터 추가
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `출결기록!A2:A`
-      }).then(function(response) {
-        const dateColumn = response.result.values || [];
-        const rowsToDelete = [];
-        
-        dateColumn.forEach((row, index) => {
-          if (row[0] === date) {
-            rowsToDelete.push(index + 2); // 2부터 시작하는 행 번호
-          }
-        });
-        
-        // 기존 데이터 삭제 요청이 필요하면 실행
-        const deleteRequests = rowsToDelete.map(row => {
-          return {
-            deleteDimension: {
-              range: {
-                sheetId: 1, // 출결기록 시트의 ID (스프레드시트에서 확인 필요)
-                dimension: 'ROWS',
-                startIndex: row - 1,
-                endIndex: row
-              }
-            }
-          };
-        });
-        
-        if (deleteRequests.length > 0) {
-          gapi.client.sheets.spreadsheets.batchUpdate({
-            spreadsheetId: SPREADSHEET_ID,
-            resource: {
-              requests: deleteRequests
-            }
-          }).then(function() {
-            // 데이터 삭제 후 새 데이터 추가
-            appendAttendanceData(values);
-          });
-        } else {
-          // 기존 데이터가 없으면 바로 추가
-          appendAttendanceData(values);
-        }
-      });
-    }
-
-    // 출결 데이터 추가
-    function appendAttendanceData(values) {
-      gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
-        range: '출결기록!A2',
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-          values: values
-        }
-      }).then(function(response) {
-        showMessage('출결 데이터가 저장되었습니다.', 'success');
-      }, function(error) {
-        showMessage('출결 데이터 저장에 실패했습니다: ' + error.result.error.message, 'error');
-      });
-    }
-
-    // 학생 테이블 업데이트
-    function updateStudentTable() {
-      const tbody = document.getElementById('studentBody');
-      tbody.innerHTML = '';
-      
-      students.forEach(student => {
-        const row = document.createElement('tr');
-        
-        const numberCell = document.createElement('td');
-        numberCell.textContent = student.number;
-        row.appendChild(numberCell);
-        
-        const nameCell = document.createElement('td');
-        nameCell.textContent = student.name;
-        row.appendChild(nameCell);
-        
-        const actionCell = document.createElement('td');
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '삭제';
-        deleteBtn.style.backgroundColor = '#e74c3c';
-        deleteBtn.onclick = function() {
-          deleteStudent(student.number);
-        };
-        
-        actionCell.appendChild(deleteBtn);
-        row.appendChild(actionCell);
-        
-        tbody.appendChild(row);
-      });
-    }
-
-    // 학생 추가 폼 표시
-    function showAddStudentForm() {
-      document.getElementById('studentForm').style.display = 'block';
-      document.getElementById('addStudentBtn').style.display = 'none';
-    }
-
-    // 학생 추가 폼 숨기기
-    function hideAddStudentForm() {
-      document.getElementById('studentForm').style.display = 'none';
-      document.getElementById('addStudentBtn').style.display = 'block';
-    }
-
-    // 학생 추가
-    function addStudent(e) {
-      e.preventDefault();
-      
-      if (!isAuthorized) {
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-        return;
-      }
-      
-      const number = document.getElementById('studentNumber').value;
-      const name = document.getElementById('studentName').value;
-      
-      // 중복 확인
-      const duplicate = students.find(student => student.number === number);
-      if (duplicate) {
-        showMessage('이미 존재하는 학생 번호입니다.', 'error');
-        return;
-      }
-      
-      gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
-        range: '학생목록!A2',
-        valueInputOption: 'USER_ENTERED',
-        resource: {
-          values: [[number, name]]
-        }
-      }).then(function(response) {
-        students.push({ number, name });
-        updateStudentTable();
-        updateAttendanceTable();
-        
-        // 폼 초기화 및 숨기기
-        document.getElementById('studentNumber').value = '';
-        document.getElementById('studentName').value = '';
-        hideAddStudentForm();
-        
-        showMessage('학생이 추가되었습니다.', 'success');
-      }, function(error) {
-        showMessage('학생 추가에 실패했습니다: ' + error.result.error.message, 'error');
-      });
-    }
-
-    // 학생 삭제
-    function deleteStudent(studentNumber) {
-      if (!confirm('정말로 이 학생을 삭제하시겠습니까?')) {
-        return;
-      }
-      
-      if (!isAuthorized) {
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-        return;
-      }
-      
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: '학생목록!A2:B'
-      }).then(function(response) {
-        const values = response.result.values || [];
-        let rowIndex = -1;
-        
-        // 삭제할 학생의 행 인덱스 찾기
-        values.forEach((row, index) => {
-          if (row[0] === studentNumber) {
-            rowIndex = index + 2; // 2부터 시작하는 행 번호
-          }
-        });
-        
-        if (rowIndex !== -1) {
-          // 학생 삭제 요청
-          gapi.client.sheets.spreadsheets.batchUpdate({
-            spreadsheetId: SPREADSHEET_ID,
-            resource: {
-              requests: [{
-                deleteDimension: {
-                  range: {
-                    sheetId: 0, // 학생목록 시트의 ID (스프레드시트에서 확인 필요)
-                    dimension: 'ROWS',
-                    startIndex: rowIndex - 1,
-                    endIndex: rowIndex
-                  }
-                }
-              }]
-            }
-          }).then(function() {
-            // 학생 목록에서 삭제
-            students = students.filter(student => student.number !== studentNumber);
-            updateStudentTable();
-            updateAttendanceTable();
-            
-            showMessage('학생이 삭제되었습니다.', 'success');
-          }, function(error) {
-            showMessage('학생 삭제에 실패했습니다: ' + error.result.error.message, 'error');
-          });
-        } else {
-          showMessage('학생을 찾을 수 없습니다.', 'error');
-        }
-      });
-    }
-
-    // 월별 리포트 생성
-    function generateReport() {
-      if (!isAuthorized) {
-        showMessage('구글 계정 연동이 필요합니다.', 'error');
-        return;
-      }
-      
-      const month = document.getElementById('monthSelect').value;
-      
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: '출결기록!A2:E'
-      }).then(function(response) {
-        const values = response.result.values || [];
-        const reportData = {};
-        
-        // 월별 데이터 필터링
-        values.forEach(row => {
-          const date = new Date(row[0]);
-          // 날짜 형식이 올바르면 처리
-          if (!isNaN(date.getTime())) {
-            const rowMonth = (date.getMonth() + 1).toString();
-            
-            if (rowMonth === month) {
-              const studentNumber = row[1];
-              const studentName = row[2];
-              const status = row[3];
-              
-              if (!reportData[studentNumber]) {
-                reportData[studentNumber] = {
-                  name: studentName,
-                  present: 0,
-                  absent: 0,
-                  late: 0,
-                  excused: 0
-                };
-              }
-              
-              reportData[studentNumber][status]++;
-            }
-          }
-        });
-        
-        // 리포트 HTML 생성
-        let reportHTML = `
-          <h3>${month}월 출결 현황</h3>
-          <table>
+        <table id="attendance-table">
             <thead>
-              <tr>
-                <th>번호</th>
-                <th>이름</th>
-                <th>출석</th>
-                <th>결석</th>
-                <th>지각</th>
-                <th>사유결석</th>
-              </tr>
+                <tr>
+                    <th>번호</th>
+                    <th>이름</th>
+                    <th>출결 상태</th>
+                    <th>메모</th>
+                </tr>
+            </thead>
+            <tbody id="attendance-body"></tbody>
+        </table>
+        
+        <div class="save-section">
+            <button id="save-btn">저장하기</button>
+        </div>
+    </div>
+
+    <script>
+        // 구글 스프레드시트 API 연동 스크립트
+        document.addEventListener('DOMContentLoaded', function() {
+            // 현재 날짜 설정
+            const today = new Date();
+            const dateInput = document.getElementById('date');
+            dateInput.valueAsDate = today;
+            
+            // 샘플 학생 데이터 (실제로는 스프레드시트에서 가져올 예정)
+            const sampleStudents = {
+                "1": [
+                    { id: 1, name: "김민준", status: "", memo: "" },
+                    { id: 2, name: "이서연", status: "", memo: "" },
+                    { id: 3, name: "박지훈", status: "", memo: "" },
+                    { id: 4, name: "최예은", status: "", memo: "" },
+                    { id: 5, name: "정도윤", status: "", memo: "" }
+                ],
+                "2": [
+                    { id: 1, name: "강하은", status: "", memo: "" },
+                    { id: 2, name: "윤서준", status: "", memo: "" },
+                    { id: 3, name: "임지안", status: "", memo: "" },
+                    { id: 4, name: "한소율", status: "", memo: "" },
+                    { id: 5, name: "오민서", status: "", memo: "" }
+                ],
+                "3": [
+                    { id: 1, name: "신유진", status: "", memo: "" },
+                    { id: 2, name: "조준우", status: "", memo: "" },
+                    { id: 3, name: "황현우", status: "", memo: "" },
+                    { id: 4, name: "송지우", status: "", memo: "" },
+                    { id: 5, name: "권하늘", status: "", memo: "" }
+                ],
+                "4": [
+                    { id: 1, name: "홍서영", status: "", memo: "" },
+                    { id: 2, name: "남도현", status: "", memo: "" },
+                    { id: 3, name: "류아린", status: "", memo: "" },
+                    { id: 4, name: "백승우", status: "", memo: "" },
+                    { id: 5, name: "고은솔", status: "", memo: "" }
+                ]
+            };
+            
+            const classSelect = document.getElementById('class-select');
+            const loadBtn = document.getElementById('load-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const attendanceBody = document.getElementById('attendance-body');
+            const messageDiv = document.getElementById('message');
+            const loaderDiv = document.getElementById('loader');
+            
+            // 출결 상태 변경 함수
+            function toggleStatus(button) {
+                const statuses = ['', 'present', 'late', 'absent'];
+                let currentIndex = statuses.indexOf(button.dataset.status);
+                currentIndex = (currentIndex + 1) % statuses.length;
+                
+                // 모든 클래스 제거
+                button.classList.remove('initial', 'present', 'late', 'absent');
+                
+                // 새 상태 설정
+                const newStatus = statuses[currentIndex];
+                button.dataset.status = newStatus;
+                
+                if (newStatus === '') {
+                    button.classList.add('initial');
+                    button.textContent = '선택';
+                } else if (newStatus === 'present') {
+                    button.classList.add('present');
+                    button.textContent = '출석';
+                } else if (newStatus === 'late') {
+                    button.classList.add('late');
+                    button.textContent = '지각';
+                } else {
+                    button.classList.add('absent');
+                    button.textContent = '결석';
+                }
+            }
+            
+            // 학생 목록 표시 함수
+            function displayStudents(classId) {
+                attendanceBody.innerHTML = '';
+                const students = sampleStudents[classId];
+                
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    
+                    const idCell = document.createElement('td');
+                    idCell.textContent = student.id;
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = student.name;
+                    
+                    const statusCell = document.createElement('td');
+                    const statusBtn = document.createElement('button');
+                    statusBtn.classList.add('status-btn', 'initial');
+                    statusBtn.textContent = '선택';
+                    statusBtn.dataset.status = '';
+                    statusBtn.onclick = function() {
+                        toggleStatus(this);
+                    };
+                    statusCell.appendChild(statusBtn);
+                    
+                    const memoCell = document.createElement('td');
+                    const memoInput = document.createElement('input');
+                    memoInput.type = 'text';
+                    memoInput.placeholder = '메모 입력';
+                    memoInput.value = student.memo;
+                    memoCell.appendChild(memoInput);
+                    
+                    row.appendChild(idCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(statusCell);
+                    row.appendChild(memoCell);
+                    
+                    attendanceBody.appendChild(row);
+                });
+            }
+            
+            // 초기 학생 목록 로드
+            displayStudents(classSelect.value);
+            
+            // 반 변경 시 학생 목록 업데이트
+            classSelect.addEventListener('change', function() {
+                displayStudents(this.value);
+            });
+            
+            // 출결 데이터 불러오기 (실제로는 구글 스프레드시트 API 사용)
+            loadBtn.addEventListener('click', function() {
+                const selectedDate = dateInput.value;
+                const selectedClass = classSelect.value;
+                
+                // 로딩 표시
+                loaderDiv.style.display = 'block';
+                messageDiv.style.display = 'none';
+                
+                // API 호출 시뮬레이션
+                setTimeout(() => {
+                    loaderDiv.style.display = 'none';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `${selectedDate} ${selectedClass}반 출결 데이터를 불러왔습니다.`;
+                    messageDiv.style.display = 'block';
+                    
+                    // 실제로는 여기서 스프레드시트 데이터 처리
+                    displayStudents(selectedClass);
+                }, 1000);
+            });
+            
+            // 출결 데이터 저장하기 (실제로는 구글 스프레드시트 API 사용)
+            saveBtn.addEventListener('click', function() {
+                const selectedDate = dateInput.value;
+                const selectedClass = classSelect.value;
+                
+                // 데이터 수집
+                const attendanceData = [];
+                const rows = attendanceBody.querySelectorAll('tr');
+                
+                rows.forEach(row => {
+                    const id = row.cells[0].textContent;
+                    const name = row.cells[1].textContent;
+                    const statusBtn = row.cells[2].querySelector('.status-btn');
+                    const status = statusBtn.dataset.status;
+                    const memo = row.cells[3].querySelector('input').value;
+                    
+                    attendanceData.push({
+                        id,
+                        name,
+                        status,
+                        memo,
+                        date: selectedDate,
+                        class: selectedClass
+                    });
+                });
+                
+                // 로딩 표시
+                loaderDiv.style.display = 'block';
+                messageDiv.style.display = 'none';
+                
+                // API 호출 시뮬레이션
+                setTimeout(() => {
+                    loaderDiv.style.display = 'none';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `${selectedDate} ${selectedClass}반 출결 데이터가 저장되었습니다.`;
+                    messageDiv.style.display = 'block';
+                    
+                    console.log('저장된 데이터:', attendanceData);
+                    // 실제로는 여기서 Google Sheets API 호출
+                }, 1000);
+            });
+        });
+        
+        // 아래는 구글 스프레드시트 연동을 위한 코드 (실제 구현 시 사용)
+        /*
+        // 1. 구글 API 로드
+        function loadGoogleAPI() {
+            const script = document.createElement('script');
+            script.src = 'https://apis.google.com/js/api.js';
+            script.onload = loadGAPIClient;
+            document.body.appendChild(script);
+        }
+        
+        // 2. GAPI 클라이언트 로드
+        function loadGAPIClient() {
+            gapi.load('client:auth2', initGAPIClient);
+        }
+        
+        // 3. API 클라이언트 초기화
+        function initGAPIClient() {
+            gapi.client.init({
+                apiKey: 'YOUR_API_KEY',
+                clientId: 'YOUR_CLIENT_ID',
+                discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                scope: 'https://www.googleapis.com/auth/spreadsheets'
+            }).then(function() {
+                // 인증 상태 리스너
+                gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+                // 초기 인증 상태 설정
+                updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+            });
+        }
+        
+        // 4. 인증 상태 업데이트
+        function updateSigninStatus(isSignedIn) {
+            if (isSignedIn) {
+                // 로그인 성공, 데이터 로드 준비 완료
+                document.getElementById('load-btn').disabled = false;
+                document.getElementById('save-btn').disabled = false;
+            } else {
+                // 로그인 필요
+                document.getElementById('load-btn').disabled = true;
+                document.getElementById('save-btn').disabled = true;
+                gapi.auth2.getAuthInstance().signIn();
+            }
+        }
+        
+        // 5. 스프레드시트에서 데이터 불러오기
+        function loadFromSpreadsheet(date, classId) {
+            return gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: '1oTXIE5sF8As54IEszmf2HJr1Dqyz4bOWmF9uU7B5ev4',
+                range: `${classId}!A:E`, // 범위 지정
+            }).then(function(response) {
+                const range = response.result;
+                if (range.values.length > 0) {
+                    // 데이터 처리
+                    return range.values;
+                } else {
+                    console.log('데이터가 없습니다.');
+                    return [];
+                }
+            }, function(response) {
+                console.error('데이터 불러오기 실패:', response.result.error.message);
+                return [];
+            });
+        }
+        
+        // 6. 스프레드시트에 데이터 저장하기
+        function saveToSpreadsheet(data, classId) {
+            const values = data.map(item => [
+                item.date,
+                item.id,
+                item.name,
+                item.status,
+                item.memo
+            ]);
+            
+            return gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: '1oTXIE5sF8As54IEszmf2HJr1Dqyz4bOWmF9uU7B5ev4',
+                range: `${classId}!A:E`,
+                valueInputOption: 'USER_ENTERED',
+                insertDataOption: 'INSERT_ROWS',
+                resource: {
+                    values: values
+                }
+            }).then(function(response) {
+                console.log('저장 성공:', response.result);
+                return true;
+            }, function(response) {
+                console.error('저장 실패:', response.result.error.message);
+                return false;
+            });
+        }
+        
+        // 구글 API 로드 시작
+        loadGoogleAPI();
+        */
+    </script>
+</body>
+</html>
