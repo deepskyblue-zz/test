@@ -471,12 +471,12 @@
         }
         
         // 구글 스프레드시트로 보내기 (시뮬레이션)
-       function sendToGoogleSheets() {
-    const date = document.getElementById('attendanceDate').value;
-    const schoolYear = document.getElementById('schoolYear').value;
-    const grade = document.getElementById('grade').value;
-    const classNum = document.getElementById('class').value;
-    const teacher = document.getElementById('teacher').value;
+    function sendToGoogleSheets() {
+        const date = document.getElementById('attendanceDate').value;
+        const schoolYear = document.getElementById('schoolYear').value;
+        const grade = document.getElementById('grade').value;
+        const classNum = document.getElementById('class').value;
+        const teacher = document.getElementById('teacher').value;
     
     if (!date) {
         alert('날짜를 선택해주세요.');
